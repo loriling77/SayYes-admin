@@ -9,7 +9,7 @@ import {
     PieChartOutlined,
     UserOutlined
 } from '@ant-design/icons';
-import { BrowserRouter, Route, Routes, useLocation, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation, Link, Outlet } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import { Button, Layout, Menu } from 'antd';
 import routes from "../route/index";
@@ -76,7 +76,7 @@ const RouteContainer: React.FC<RouteContainerProps> = ({ collapsed, toggleCollap
                 theme="dark"
                 style={{ transition: 'width 0.2s' }}
             >
-                <div className="sidebar-header">
+                <div style={{ color: 'white', textAlign: 'center', marginTop: 10 }}>
                     后台管理系统
                 </div>
                 <Menu
@@ -84,7 +84,7 @@ const RouteContainer: React.FC<RouteContainerProps> = ({ collapsed, toggleCollap
                     mode="inline"
                     selectedKeys={[selectedKey]}
                     items={menuItems}
-                    style={{ height: 'calc(100% - 64px)', borderRight: 0 }}
+                    style={{ height: 'calc(100% - 64px)', borderRight: 0, marginTop: 20 }}
                 />
             </Sider>
 
@@ -104,7 +104,18 @@ const RouteContainer: React.FC<RouteContainerProps> = ({ collapsed, toggleCollap
                 <Content style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: 'white' }}>
                     <Routes>
                         {routes.map((item) => (
-                            <Route key={item.path} path={item.path} element={item.element}>
+                            <Route
+                                key={item.path}
+                                path={item.path}
+                                element={item.children ?
+                                    <>
+                                        {item.element}
+                                        <Outlet></Outlet>
+                                    </> :
+                                    item.element
+
+                                }
+                            >
                                 {item.children?.map((child) => (
                                     <Route
                                         key={child.path}

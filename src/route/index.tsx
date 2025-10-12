@@ -1,8 +1,8 @@
-import Invitation from '../view/invitation/index';
+
 import User from '../view/user/index';
 import Login from '../view/login/index';
-import InvitationTemplate from '../view/invitation/InvitationTemplate';
-import Category from '../view/invitation/category';
+import InvitationTemplate from '../view/invitation/invitationTemplate/index';
+import Category from '../view/invitation/category/index';
 
 
 
@@ -10,9 +10,9 @@ const routes = [
     { path: '/', name: 'login', element: <Login /> },
     { path: '/login', name: 'login', element: <Login /> },
     {
-        path: '/invitation', name: 'invitation', element: <Invitation />,
+        path: '/invitation', name: 'invitation',
         children: [
-            { path: 'invitationTemplate', name: 'Invitation Template', element: < InvitationTemplate /> },
+            { path: 'invitationTemplate', name: 'invitation Template', element: < InvitationTemplate /> },
             { path: 'category', name: 'category', element: < Category /> },
 
 
@@ -21,9 +21,7 @@ const routes = [
     },
     {
         path: '/user', name: 'user', element: <User />,
-        children: [
 
-        ]
     },
 ];
 
