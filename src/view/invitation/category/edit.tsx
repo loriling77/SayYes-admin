@@ -1,5 +1,6 @@
 import { useState } from 'react'
-
+import { CreateCategoryData } from '../../../api/category'
+import { form } from 'antd/es/from'
 
 
 import { Modal, Form, Input, Upload } from 'antd'
@@ -17,16 +18,26 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
 
 
     const [fileList, setFileList] = useState<UploadFile[]>([
-        {
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
+
     ]);
     const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
         setFileList(newFileList);
     };
+    const handleOk = async () => {
+
+
+        try {
+            let formData = new FormData()
+            formData.append('name',)
+            const response = await CreateCategoryData();
+
+
+        } catch (error) {
+            console.error('获取分类失败：', error);
+        }
+    }
+
+
 
     const onPreview = async (file: UploadFile) => {
         let src = file.url as string;
@@ -41,6 +52,8 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
         image.src = src;
         const imgWindow = window.open(src);
         imgWindow?.document.write(image.outerHTML);
+
+
     };
     return (
         <>
@@ -50,7 +63,7 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
                 title="Add Category"
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={props.isModalOpen}
-                // onOk={handleOk}
+                onOk={handleOk}
                 onCancel={props.openModal}
                 centered
             >
@@ -72,13 +85,15 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
 
                         }
                         <Upload
-                            action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                            action="http://127.0.0.1:8081/upload/files"
                             listType="picture-card"
                             fileList={fileList}
                             onChange={onChange}
                             onPreview={onPreview}
+                            maxCount={1}
+                            name='files'
                         >
-                            {fileList.length < 5 && '+ Upload'}
+                            {fileList.length < 1 && '+ Upload'}
                         </Upload>
                     </Form.Item>
 

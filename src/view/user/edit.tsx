@@ -53,6 +53,7 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
                 // onOk={handleOk}
                 onCancel={props.openModal}
                 centered
+
             >
                 <Form>
                     <Form.Item<FieldType>

@@ -103,9 +103,6 @@ const App: React.FC = () => {
     }
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    const openModal = () => {
-        setIsModalOpen(!isModalOpen)
-    };
     return <>
 
         <Form
@@ -134,7 +131,7 @@ const App: React.FC = () => {
                     </Button>
                 </Form.Item>
                 <Form.Item label={null} style={{ marginLeft: 20 }}>
-                    <Button type="primary" htmlType="submit" onClick={openModal}>
+                    <Button type="primary" htmlType="submit" onClick={() => { setIsModalOpen(true) }}>
                         Add
                     </Button>
                 </Form.Item>
@@ -144,7 +141,7 @@ const App: React.FC = () => {
         </Form>
 
         <Table<DataType> loading={loading} columns={columns} dataSource={categories} />
-        <Edit isModalOpen={isModalOpen} openModal={openModal}>
+        <Edit isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
 
 
         </Edit>
