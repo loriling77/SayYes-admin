@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { CreateCategoryData } from '../../../api/category'
-import { form } from 'antd/es/from'
+import { useEffect, useState } from 'react'
+import { CreateCategoryData, UpdateCategoryData } from '../../../api/category'
+import { useForm } from 'antd/es/form/Form'
 
 
-import { Modal, Form, Input, Upload } from 'antd'
+import { Modal, Form, Input, Upload, message } from 'antd'
 import { useRoutes } from 'react-router-dom';
 
 type FieldType = {
@@ -14,30 +14,54 @@ type FieldType = {
 
 
 
-export default function Edit(props: { isModalOpen: boolean, openModal: () => void }) {
+export default function Edit(props: { isModalOpen: boolean, typeAction: string, setIsModalOpen: (value: boolean) => void, fetchingCategories(): object, editData: { [key: string]: any } }) {
 
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [form] = useForm()
 
-    const [fileList, setFileList] = useState<UploadFile[]>([
-
-    ]);
+    useEffect(() => {
+        if (!props.editData) {
+            //  添加
+            form.resetFields()
+            setFileList([])
+        } else {
+            //  编辑
+            form.setFieldsValue(props.editData)
+            setFileList([{ url: props.editData?.icon }])
+        }
+    }, [props.isModalOpen])
     const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
         setFileList(newFileList);
     };
+    //   添加 和编辑的调用接口
     const handleOk = async () => {
-
-
         try {
-            let formData = new FormData()
-            formData.append('name',)
-            const response = await CreateCategoryData();
+            if (!props.editData) {
+                let formData = new FormData()
+                formData.append('name', form.getFieldValue('name'))
+                formData.append('icon', fileList[0].response.data[0].semi_path)
+                const response = await CreateCategoryData(formData);
+                message.success(response?.message)
+            } else {
+                let formData = new FormData()
+                formData.append('name', form.getFieldValue('name'))
+                formData.append('icon', !!fileList[0].url ? fileList[0].url.replace(/^https?:\/\/[^/]+\/?/, "") : fileList[0].response.data[0].semi_path)
+                const response = await UpdateCategoryData(props.editData.category_id, formData);
+                message.success(response?.message)
+            }
 
+            props.setIsModalOpen(false)
+            props.fetchingCategories()
 
         } catch (error) {
             console.error('获取分类失败：', error);
         }
     }
 
-
+    const onCancel = () => {
+        props.setIsModalOpen(false);
+        form.resetFields()
+    }
 
     const onPreview = async (file: UploadFile) => {
         let src = file.url as string;
@@ -52,9 +76,8 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
         image.src = src;
         const imgWindow = window.open(src);
         imgWindow?.document.write(image.outerHTML);
-
-
     };
+
     return (
         <>
 
@@ -63,11 +86,12 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
                 title="Add Category"
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={props.isModalOpen}
+
                 onOk={handleOk}
-                onCancel={props.openModal}
+                onCancel={onCancel}
                 centered
             >
-                <Form>
+                <Form form={form}>
                     <Form.Item<FieldType>
                         label="分类名称"
                         name="name"
@@ -78,8 +102,6 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
 
                     <Form.Item<FieldType>
                         label="Upload Icon"
-                        name="name"
-                        rules={[{ required: true, message: 'Please input name!' }]}
                     >
                         {
 
@@ -87,6 +109,7 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
                         <Upload
                             action="http://127.0.0.1:8081/upload/files"
                             listType="picture-card"
+                            accept="png,jpg,svg"
                             fileList={fileList}
                             onChange={onChange}
                             onPreview={onPreview}
@@ -98,11 +121,6 @@ export default function Edit(props: { isModalOpen: boolean, openModal: () => voi
                     </Form.Item>
 
                 </Form>
-
-
-
-
-
             </Modal>
         </>
     )
